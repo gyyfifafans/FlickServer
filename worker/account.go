@@ -6,8 +6,8 @@ import (
 )
 
 func AccountRegister(c *gin.Context) {
-	var param *model.Account
-	if err := c.Bind(param); err != nil {
+	var param model.Account
+	if err := c.Bind(&param); err != nil {
 		respJSON(c, Result{
 			Status: 500,
 			Msg:    err.Error(),
@@ -37,8 +37,8 @@ func AccountRegister(c *gin.Context) {
 }
 
 func AccountLogin(c *gin.Context) {
-	var param *model.Account
-	if err := c.Bind(param); err != nil {
+	var param model.Account
+	if err := c.Bind(&param); err != nil {
 		respJSON(c, Result{
 			Status: 500,
 			Msg:    err.Error(),
