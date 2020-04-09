@@ -6,14 +6,14 @@ import (
 )
 
 type Result struct {
-	Status int64       `json:"status"`
-	Data   interface{} `json:"data"`
-	Msg    string      `json:"msg"`
+	Status int64       `json:"status,omitempty"`
+	Data   interface{} `json:"data,omitempty"`
+	Msg    string      `json:"msg,omitempty"`
 }
 
 type List struct {
-	Total int64       `json:"total"`
-	List  interface{} `json:"list"`
+	Total int64       `json:"total,omitempty"`
+	List  interface{} `json:"list,omitempty"`
 }
 
 func respJSON(c *gin.Context, data interface{}) {

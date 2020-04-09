@@ -2,11 +2,18 @@ package worker
 
 import (
 	"FlickServer/model"
+	"github.com/astaxie/beego/orm"
 	"github.com/gin-gonic/gin"
 )
 
+type AccountParam struct {
+	Username string `json:"username" orm:"size(80)"`
+	Password string `json:"password" orm:"size(64)"`
+	Nickname string `json:"nickname" orm:"size(80)"`
+}
+
 func AccountRegister(c *gin.Context) {
-	var param model.Account
+	var param AccountParam
 	if err := c.Bind(&param); err != nil {
 		respJSON(c, Result{
 			Status: 500,
@@ -22,6 +29,19 @@ func AccountRegister(c *gin.Context) {
 		return
 	}
 	account := &model.Account{}
+	if has, err := account.HasUsername(param.Username); err != nil {
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	} else if has {
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    "账号已经注册过",
+		})
+		return
+	}
 	if r, err := account.Add(param.Username, param.Password, param.Nickname); err != nil {
 		respJSON(c, Result{
 			Status: 500,
@@ -37,7 +57,7 @@ func AccountRegister(c *gin.Context) {
 }
 
 func AccountLogin(c *gin.Context) {
-	var param model.Account
+	var param AccountParam
 	if err := c.Bind(&param); err != nil {
 		respJSON(c, Result{
 			Status: 500,
@@ -54,6 +74,13 @@ func AccountLogin(c *gin.Context) {
 	}
 	account := &model.Account{}
 	if r, err := account.QueryWithUsername(param.Username); err != nil {
+		if err.Error() == orm.ErrNoRows.Error() {
+			respJSON(c, Result{
+				Status: 500,
+				Msg:    "查不到账号",
+			})
+			return
+		}
 		respJSON(c, Result{
 			Status: 500,
 			Msg:    err.Error(),

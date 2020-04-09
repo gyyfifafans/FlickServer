@@ -43,3 +43,12 @@ func (self *Account) Add(username string, password string, nickname string) (*Ac
 		return r, nil
 	}
 }
+
+func (self *Account) HasUsername(username string) (bool, error) {
+	db := common.NewOrm()
+	if num, err := db.QueryTable("account").Filter("username", username).Count(); err != nil {
+		return false, err
+	} else {
+		return num >= 1, nil
+	}
+}
