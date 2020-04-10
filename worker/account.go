@@ -9,7 +9,6 @@ import (
 type AccountParam struct {
 	Username string `json:"username" orm:"size(80)"`
 	Password string `json:"password" orm:"size(64)"`
-	Nickname string `json:"nickname" orm:"size(80)"`
 }
 
 func AccountRegister(c *gin.Context) {
@@ -21,7 +20,7 @@ func AccountRegister(c *gin.Context) {
 		})
 		return
 	}
-	if len(param.Username) == 0 || len(param.Password) == 0 || len(param.Nickname) == 0 {
+	if len(param.Username) == 0 || len(param.Password) == 0 {
 		respJSON(c, Result{
 			Status: 500,
 			Msg:    "参数非法",
@@ -42,7 +41,7 @@ func AccountRegister(c *gin.Context) {
 		})
 		return
 	}
-	if r, err := account.Add(param.Username, param.Password, param.Nickname); err != nil {
+	if r, err := account.Add(param.Username, param.Password); err != nil {
 		respJSON(c, Result{
 			Status: 500,
 			Msg:    err.Error(),

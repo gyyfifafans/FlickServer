@@ -4,9 +4,9 @@ import "FlickServer/common"
 
 type Account struct {
 	Id       int64  `json:"id"`
-	Username string `json:"-" orm:"size(80)"`
+	Username string `json:"name" orm:"size(80)"`
 	Password string `json:"-" orm:"size(64)"`
-	Nickname string `json:"nickname" orm:"size(80)"`
+	UserId   int64  `json:"userID"`
 }
 
 func (self *Account) QueryWithId(id int64) (*Account, error) {
@@ -29,12 +29,11 @@ func (self *Account) QueryWithUsername(username string) (*Account, error) {
 	}
 }
 
-func (self *Account) Add(username string, password string, nickname string) (*Account, error) {
+func (self *Account) Add(username string, password string) (*Account, error) {
 	db := common.NewOrm()
 	r := &Account{
 		Username: username,
 		Password: password,
-		Nickname: nickname,
 	}
 	if id, err := db.Insert(r); err != nil {
 		return nil, err
