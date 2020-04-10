@@ -7,9 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	GET = "GET"
+	POST = "POST"
+)
+
 type GinHandler struct {
 	Path    string
 	Handler gin.HandlerFunc
+	Method  string
 }
 
 func options(c *gin.Context) {
@@ -20,8 +26,8 @@ func registerApi(rounter *gin.Engine) {
 
 	// 注册路由
 	apis := []GinHandler{
-		{"/account/register", worker.AccountRegister},
-		{"/account/login", worker.AccountLogin},
+		{"/account/register", worker.AccountRegister, POST},
+		{"/account/login", worker.AccountLogin, POST},
 	}
 
 	// 路由全局设置
@@ -40,7 +46,12 @@ func registerApi(rounter *gin.Engine) {
 	{
 		for _, v := range apis {
 			api.OPTIONS(v.Path, options) // 浏览器http请求会先触发一次options请求
-			api.POST(v.Path, v.Handler)
+			switch v.Method {
+			case POST:
+				api.POST(v.Path, v.Handler)
+			case GET:
+				api.GET(v.Path, v.Handler)
+			}
 		}
 	}
 	// 开放静态资源目录
