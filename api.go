@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
+const (
 	GET = "GET"
 	POST = "POST"
 )
@@ -36,14 +36,7 @@ func testParam(c *gin.Context) {
 	c.String(200, "it works!")
 }
 
-func registerApi(rounter *gin.Engine) {
-
-	// 注册路由
-	apis := []GinHandler{
-		{"/account/register", worker.AccountRegister, POST},
-		{"/account/login", worker.AccountLogin, POST},
-		{"/get_test/:id", testParam, GET}, // 获取路由参数测试
-	}
+func rounterInit(rounter *gin.Engine, apis []GinHandler) {
 
 	// 路由全局设置
 	store := cookie.NewStore([]byte("secret-flickServer-&^#$%&*"))
@@ -56,23 +49,22 @@ func registerApi(rounter *gin.Engine) {
 	rounter.Use(gin.Logger())
 	rounter.Use(gin.Recovery())
 	rounter.Use(makeAccessJsMiddleware()) // 跨域处理放前面
-	// 接口不分组
-	{/*
-		for _, v := range apis {
-			rounter.OPTIONS(v.Path, options) // 浏览器http请求会先触发一次options请求
-			switch v.Method {
-			case POST:
-				rounter.POST(v.Path, v.Handler)
-			case GET:
-				rounter.GET(v.Path, v.Handler)
-			}
-		}*/
+
+	type HandlerList []GinHandler
+	type HandlerMap map[string]HandlerList
+
+	_handlers := make(HandlerMap, len(apis))
+	for _, v := range apis {
+		if _, exist := _handlers[v.Path]; !exist {
+			_handlers[v.Path] = make(HandlerList, 0, 10)
+		}
+		_handlers[v.Path] = append(_handlers[v.Path], v)
 	}
-	// 接口分组
+
 	api := rounter.Group("/v1")
-	{
-		for _, v := range apis {
-			api.OPTIONS(v.Path, options) // 浏览器http请求会先触发一次options请求
+	for path, list := range _handlers {
+		api.OPTIONS(path, options)
+		for _, v := range list {
 			switch v.Method {
 			case POST:
 				api.POST(v.Path, v.Handler)
@@ -81,8 +73,28 @@ func registerApi(rounter *gin.Engine) {
 			}
 		}
 	}
+
 	// 开放静态资源目录
 	rounter.Static("/static", "./static")
+}
+
+func registerApi(rounter *gin.Engine) {
+
+	// 注册路由
+	apis := []GinHandler{
+		{"/account/register", worker.AccountRegister, POST},
+		{"/account/login", worker.AccountLogin, POST},
+		{"/get_test/:id", testParam, GET}, // 获取路由参数测试
+
+		{"/test_mix", func(c *gin.Context) {
+			fmt.Printf("get.\n")
+		}, GET}, // 获取路由参数测试
+		{"/test_mix", func(c *gin.Context) {
+			fmt.Printf("post.\n")
+		}, POST}, // 获取路由参数测试
+	}
+
+	rounterInit(rounter, apis)
 }
 
 func makeAccessJsMiddleware() gin.HandlerFunc {
