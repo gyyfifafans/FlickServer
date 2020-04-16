@@ -3,6 +3,7 @@ package main
 import (
 	"FlickServer/common"
 	"FlickServer/model"
+	"FlickServer/spider"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
@@ -54,9 +55,14 @@ func main() {
 func parseArgs() {
 	switch len(os.Args) {
 	case 2:
-		// 重建数据库
-		if os.Args[1] == "-syncdb" {
+		switch os.Args[1] {
+		case "-syncdb":
+			// 建立数据库
 			common.Syncdb()
+			os.Exit(0)
+		case "-spider":
+			// 抓取目标服务器数据
+			spider.Capture()
 			os.Exit(0)
 		}
 	}

@@ -9,7 +9,7 @@ type MusicData struct {
 	Title        string `json:"title" orm:"size(64)"`
 	Artist       string `json:"artist" orm:"size(64)"`
 	MovieLength  string `json:"movieLength" orm:"size(64)"`
-	Tags         string `json:"tags" orm:"size(64)"`
+	Tags         string `json:"tags" orm:"size(1024)"`
 	UpdateTime   int64  `json:"updateTime"`
 	CreateTime   int64  `json:"createTime"`
 }
