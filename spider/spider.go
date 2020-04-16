@@ -36,10 +36,6 @@ func get(url string) (string, error) {
 }
 
 func Capture() {
-	if err := model.Config.Load("config/app.ini"); err != nil {
-		panic("配置文件加载失败.")
-	}
-
 	{
 		db := common.NewOrm()
 		db.Raw("delete from music_data;").Exec() // 移除原music_data数据
