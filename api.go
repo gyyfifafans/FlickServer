@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	GET = "GET"
+	GET  = "GET"
 	POST = "POST"
 )
 
@@ -50,6 +50,7 @@ func rounterInit(rounter *gin.Engine, apis []GinHandler) {
 	rounter.Use(gin.Recovery())
 	rounter.Use(makeAccessJsMiddleware()) // 跨域处理放前面
 
+	//还有问题没看懂
 	type HandlerList []GinHandler
 	type HandlerMap map[string]HandlerList
 
@@ -85,7 +86,11 @@ func registerApi(rounter *gin.Engine) {
 		{"/account/register", worker.AccountRegister, POST},
 		{"/account/login", worker.AccountLogin, POST},
 		{"/get_test/:id", testParam, GET}, // 获取路由参数测试
-
+		{"/get_test", testParam, GET},     //  /get_test?id=
+		{"/get_music_test", worker.MusicDataGetInitMusic, GET},
+		//===========================================================================
+		{"/", worker.RouterGetData, GET},
+		{"/", worker.RouterPostData, POST},
 		{"/test_mix", func(c *gin.Context) {
 			fmt.Printf("get.\n")
 		}, GET}, // 获取路由参数测试

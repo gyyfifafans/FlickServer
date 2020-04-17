@@ -12,6 +12,7 @@ type LevelData struct {
 	Notes       string `json:"notes" orm:"type(text)"`
 	UpdateTime  int64  `json:"updateTime"`
 	CreateTime  int64  `json:"createTime"`
+	PlayCount   int64  `json:"playCount"`
 }
 
 func (self *LevelData) QueryWithId(id int64) (*LevelData, error) {
@@ -22,4 +23,8 @@ func (self *LevelData) QueryWithId(id int64) (*LevelData, error) {
 	} else {
 		return r, nil
 	}
+}
+
+func (self *LevelData) QueryWithMovieUrl() {
+
 }

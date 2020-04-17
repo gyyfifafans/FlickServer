@@ -99,3 +99,15 @@ func AccountLogin(c *gin.Context) {
 		})
 	}
 }
+
+func AccountGetUserName(c *gin.Context) {
+	var param = AccountParam{}
+	if err := c.Bind(&param); err != nil {
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	}
+	print("go there!!!")
+}

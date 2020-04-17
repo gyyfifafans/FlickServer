@@ -4,9 +4,9 @@ import (
 	"FlickServer/common"
 	"FlickServer/model"
 	"encoding/json"
-	"github.com/seefan/to"
 	"fmt"
 	"github.com/parnurzeal/gorequest"
+	"github.com/seefan/to"
 	"strconv"
 	"strings"
 )
@@ -42,7 +42,7 @@ func Capture() {
 
 	{
 		db := common.NewOrm()
-		db.Raw("delete from music_data;").Exec() // 移除原music_data数据
+		db.Raw("delete from music_data;").Exec()    // 移除原music_data数据
 		db.Raw("truncate table music_data;").Exec() // 设置表id从1开始
 		url := "http://timetag.main.jp/nicoflick/nicoflick.php?req=music&time=0"
 		captureMusicData(url)
@@ -58,7 +58,7 @@ func captureMusicData(url string) {
 		// 表结构里是int64
 		// 建立一个兼容的结构体，插入时再使用原结构体
 		type Temp struct {
-			IdStr string `json:"id"`
+			IdStr         string `json:"id"`
 			UpdateTimeStr string `json:"updateTime"`
 			CreateTimeStr string `json:"createTime"`
 			model.MusicData
@@ -96,4 +96,8 @@ func captureMusicData(url string) {
 			}
 		}
 	}
+}
+
+func captureLevelData(url string) {
+
 }
