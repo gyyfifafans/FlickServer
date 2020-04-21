@@ -6,9 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//这个是具体做什么用的，需要和表的结构一致么？好像无法去到传进来的参数
+//供方法里使用
 type MusicDataParam struct {
-	Id         int64  `json:"id"`
 	Title      string `json:"title" orm:"size(64)"`
 	Artist     string `json:"artist" orm:"size(64)"`
 	UpdateTime int64  `json:"updateTime"`

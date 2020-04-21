@@ -9,7 +9,7 @@ import copy
 
 def download_noteData():
     print "========start"
-    for i in range(207,2988):
+    for i in range(3040,3102):
     #for i in range(2459,2482):
         url = "http://timetag.main.jp/nicoflick/nicoflick.php?req=timetag&id="+str(i)+"&no-json=1&form=1"
         r = requests.get(url)
@@ -59,6 +59,8 @@ def get_max():
     html = etree.HTML(text)
     music_max = html.xpath("/html/body/div[3]/div/table/tbody/tr[1]/td[1]/text()")
     level_max = html.xpath("/html/body/table/tbody/tr[1]/td[1]/text()")
+    print "music_max is : ",music_max[0]
+    print "level_max is : ",level_max[0]
     return music_max[0],level_max[0]
 
 
@@ -155,10 +157,9 @@ def uploadToSql(m,l):
     print "===========start"
     db = pymysql.connect("127.0.0.1","root","","flickdb")
     cursor = db.cursor()
-    '''   
     for i in m:
         try:
-            
+            '''               
             #update
             sql1 = "UPDATE music_data SET id = %d ,movie_url = '%s' ,thumbnail_url = '%s' ,title = '%s' ,artist ='%s', notes = '%s', tags = '%s' ,update_time = %d ,create_time = %d" % (int(i.get("id")),
                                                                                                                                                                                                 i.get("movie_url"),
@@ -169,7 +170,7 @@ def uploadToSql(m,l):
                                                                                                                                                                                                 i.get("tags"),
                                                                                                                                                                                                 int(i.get("update_time")),
                                                                                                                                                                                                 int(i.get("create_time")))
-            
+            '''
             #insert
             sql1 = "INSERT INTO music_data (id  ,movie_url  ,thumbnail_url ,title ,artist , movie_length , tags  ,update_time  ,create_time ) VALUES (%d,'%s','%s','%s','%s','%s','%s',%d,%d)"% (int(i.get("id")),
                                                                                                                                                                                                 i.get("movie_url"),
@@ -186,7 +187,7 @@ def uploadToSql(m,l):
         except Exception,e:
             db.rollback()
             print(e)
-    '''        
+            
     for j in l:
         try:
             '''
@@ -202,7 +203,7 @@ def uploadToSql(m,l):
                                                                                                                                                                                                 int(j.get("create_time")))
             '''
             #insert
-            sql2 = "INSERT INTO level_data (id  ,movie_url  ,level ,creator ,description , speed , notes  ,update_time  ,create_time ) VALUES (%d,'%s','%s','%s','%s','%s','%s',%d,%d)"%(int(j.get("id")),
+            sql2 = "INSERT INTO level_data (id  ,movie_url  ,level ,creator ,description , speed , notes  ,update_time  ,create_time,play_count) VALUES (%d,'%s','%s','%s','%s','%s','%s',%d,%d,%d)"%(int(j.get("id")),
                                                                                                                                                                                                 j.get("movie_url"),
                                                                                                                                                                                                 j.get("level"),
                                                                                                                                                                                                 j.get("creator"),
@@ -210,7 +211,8 @@ def uploadToSql(m,l):
                                                                                                                                                                                                 j.get("speed"),
                                                                                                                                                                                                 j.get("notes"),
                                                                                                                                                                                                 int(j.get("update_time")),
-                                                                                                                                                                                                int(j.get("create_time")))
+                                                                                                                                                                                                int(j.get("create_time")),
+                                                                                                                                                                                                0)
             #print sql2
             cursor.execute(sql2)
             db.commit()
@@ -223,7 +225,7 @@ def uploadToSql(m,l):
     print "===========finish"
     
 if __name__=="__main__":
-    #download_noteData()
+    download_noteData()
     postSql_getData()
     #download_noteDataV2(2)
     

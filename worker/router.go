@@ -43,13 +43,19 @@ func RouterPostData(c *gin.Context) {
 Get Data
 */
 func RouterMusic(c *gin.Context) {
+	//if t, err := strconv.ParseInt(c.Query("time"), 10, 64); err != nil {
+	//	print(t)
+	//} else if t == 0 {
+	//	MusicDataGetInitMusic(c)
+	//
+	//} else {
+	//	MusicDataGetLastUpdateMusic(c, t)
+	//}
 	if t, err := strconv.ParseInt(c.Query("time"), 10, 64); err != nil {
 		print(t)
-	} else if t == 0 {
-		//MusicDataGetInitMusic(c)
-
 	} else {
-		MusicDataGetLastUpdateMusic(c, t)
+		MusicDataGetInitMusic(c)
+
 	}
 }
 
@@ -57,7 +63,7 @@ func RouterLevel(c *gin.Context) {
 	if t, err := strconv.ParseInt(c.Query("time"), 10, 64); err != nil {
 		print(t)
 	} else if t == 0 {
-
+		LevelDataGetInitLevel(c)
 	}
 }
 

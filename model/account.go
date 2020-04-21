@@ -11,6 +11,7 @@ type Account struct {
 	//ScoreData  *ScoreData `orm:"null;rel(fk)"`
 	UpdateTime int64 `json:"updateTime"`
 	UserLevel  int16 `json:"userLevel"`
+	//CommentData []*CommentData `orm:"reverse(many)"`
 }
 
 func (self *Account) QueryWithId(id int64) (*Account, error) {

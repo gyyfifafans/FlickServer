@@ -13,16 +13,7 @@ type MusicData struct {
 	Tags         string `json:"tags" orm:"type(text)"`
 	UpdateTime   int64  `json:"updateTime"`
 	CreateTime   int64  `json:"createTime"`
-}
-
-func (self *MusicData) QueryWithId(id int64) (*MusicData, error) {
-	db := common.NewOrm()
-	r := &MusicData{}
-	if err := db.QueryTable("MusicData").Filter("id", id).One(r); err != nil {
-		return nil, err
-	} else {
-		return r, nil
-	}
+	//Levels        []*LevelData `orm:"reverse(many)"`
 }
 
 func (self *MusicData) QueryAllMusics() ([]*MusicData, error) {

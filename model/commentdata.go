@@ -8,6 +8,7 @@ type CommentData struct {
 	Comment    string `json:"comment" orm:"size(1024)"`
 	UserId     string `json:"userID" orm:size(200)"`
 	Updatetime int64  `json:"updateTime"`
+	//Account   *Account `json:"account" orm:"rel(fk)"`
 }
 
 func (self *CommentData) QueryWithId(id int64) (*CommentData, error) {

@@ -1,14 +1,45 @@
 package worker
 
+import (
+	"FlickServer/model"
+	"github.com/astaxie/beego/orm"
+	"github.com/gin-gonic/gin"
+)
+
 type LevelDataParam struct {
-	Id          int64  `json:"id"`
-	MovieUrl    string `json:"movieURL" orm:"size(200)"`
-	Level       string `json:"level" orm:"size(64)"`
-	Creator     string `json:"creator" orm:"size(64)"`
-	Description string `json:"description" orm:"size(1024)"`
-	Speed       string `json:"speed" orm:"size(64)"`
-	Notes       string `json:"notes" orm:"type(text)"`
-	UpdateTime  int64  `json:"updateTime"`
-	CreateTime  int64  `json:"createTime"`
-	PlayCount   int32  `json:"playCount"`
+	MovieUrl string `json:"movieURL" orm:"size(200)"`
+	Level    string `json:"level" orm:"size(64)"`
+	Notes    string `json:"notes" orm:"type(text)"`
+}
+
+func LevelDataGetInitLevel(c *gin.Context) {
+	var param = LevelDataParam{}
+	if err := c.Bind(&param); err != nil {
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	}
+	levelData := &model.LevelData{}
+	if r, err := levelData.QueryAllLevels(); err != nil {
+		if err.Error() == orm.ErrNoRows.Error() {
+			respJSON(c, Result{
+				Status: 500,
+				Msg:    "查不到等级",
+			})
+			return
+		}
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	} else {
+		respJSON(c, Result{
+			Status: 200,
+			Data:   r,
+		})
+	}
+	print("go there!!!")
 }
