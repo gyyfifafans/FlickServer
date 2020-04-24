@@ -30,17 +30,63 @@ func (self *LevelData) QueryAllLevels() ([]*LevelData, error) {
 	}
 
 	for v := range m {
-		//var tr =  []*LevelData{}
-		var t = make([]*LevelData, 0, 10)
-		if _, err := db.QueryTable("LevelData").Filter("movie_url", m[v].MovieUrl).Filter("creator", "MIZUSHIKI").Filter("creator", "mizushiki").All(&t); err != nil {
+		var t = []*LevelData{}
+		if _, err := db.QueryTable("LevelData").Filter("movie_url", m[v].MovieUrl).
+			Filter("creator", "MIZUSHIKI").
+			Filter("creator", "mizushiki").
+			All(&t, "id",
+				"movie_url",
+				"level",
+				"creator",
+				"description",
+				"speed",
+				"update_time",
+				"create_time",
+				"play_count"); err != nil {
 			return nil, err
 		} else {
-			println(len(t))
-			//println(tr[0].MovieUrl)
-			r = append(t)
+			for i := range t {
+				r = append(r, t[i])
+			}
 
 		}
 	}
 	return r, nil
 
+}
+
+func (self *LevelData) QueryAllNotes() ([]*LevelData, error) {
+	db := common.NewOrm()
+	r := make([]*LevelData, 0, 60)
+	m := make([]*MusicData, 0, 14)
+	//初期先只提供这么多
+	if _, err := db.QueryTable("MusicData").Limit(14).All(&m); err != nil {
+		return nil, err
+	}
+
+	for v := range m {
+		var t = []*LevelData{}
+		if _, err := db.QueryTable("LevelData").Filter("movie_url", m[v].MovieUrl).
+			Filter("creator", "MIZUSHIKI").
+			Filter("creator", "mizushiki").
+			All(&t, "notes"); err != nil {
+			return nil, err
+		} else {
+			for i := range t {
+				r = append(r, t[i])
+			}
+
+		}
+	}
+	return r, nil
+}
+
+func (self *LevelData) QueryNotesWithId(id int64) (*LevelData, error) {
+	db := common.NewOrm()
+	r := &LevelData{}
+	if err := db.QueryTable("LevelData").Filter("id", id).One(r); err != nil {
+		return nil, err
+	} else {
+		return r, nil
+	}
 }

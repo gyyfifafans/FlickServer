@@ -43,3 +43,35 @@ func LevelDataGetInitLevel(c *gin.Context) {
 	}
 	print("go there!!!")
 }
+
+func LevelDataGetNotes(c *gin.Context, id int64) {
+	var param = LevelDataParam{}
+	if err := c.Bind(&param); err != nil {
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	}
+	levelData := &model.LevelData{}
+	if r, err := levelData.QueryNotesWithId(id); err != nil {
+		if err.Error() == orm.ErrNoRows.Error() {
+			respJSON(c, Result{
+				Status: 500,
+				Msg:    "查不到谱面",
+			})
+			return
+		}
+		respJSON(c, Result{
+			Status: 500,
+			Msg:    err.Error(),
+		})
+		return
+	} else {
+		respJSON(c, Result{
+			Status: 200,
+			Data:   r,
+		})
+	}
+	print("go there!!!")
+}

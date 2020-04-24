@@ -7,9 +7,10 @@ from lxml import etree
 import pymysql
 import copy
 
+
 def download_noteData():
     print "========start"
-    for i in range(3040,3102):
+    for i in range(3102,3238):
     #for i in range(2459,2482):
         url = "http://timetag.main.jp/nicoflick/nicoflick.php?req=timetag&id="+str(i)+"&no-json=1&form=1"
         r = requests.get(url)
@@ -39,10 +40,12 @@ def download_noteDataV2(i):
         #不应该是写文件，而是直接返回，并且需要时utf-8
         '''
         print "========finish at ",i
+        result = ""
         with open("/Users/tiger/Project/noteData/noteData_"+str(i)+".txt", mode='r') as f:
-            result = f.readlines()
+            for line in f.read():
+                result += line
         f.close()
-        return result[0]
+        return result
     except Exception,e:
         print e
         
@@ -223,6 +226,7 @@ def uploadToSql(m,l):
     db.close()
             
     print "===========finish"
+ 
     
 if __name__=="__main__":
     download_noteData()

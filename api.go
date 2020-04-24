@@ -6,6 +6,9 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"path/filepath"
 )
 
 const (
@@ -77,9 +80,13 @@ func rounterInit(rounter *gin.Engine, apis []GinHandler) {
 
 	// 开放静态资源目录
 	rounter.Static("/static", "./static")
+	rounter.LoadHTMLGlob("views/*")
 }
 
 func registerApi(rounter *gin.Engine) {
+
+	// Set a lower memory limit for multipart forms
+	rounter.MaxMultipartMemory = 8 << 30 //
 
 	// 注册路由
 	apis := []GinHandler{
@@ -97,6 +104,31 @@ func registerApi(rounter *gin.Engine) {
 		{"/test_mix", func(c *gin.Context) {
 			fmt.Printf("post.\n")
 		}, POST}, // 获取路由参数测试
+		//{"/fileuplaod",upload.Fileupload,POST},
+		//{"/fileopt",upload.Fileopthtml,GET},
+
+		{"/upload", func(c *gin.Context) {
+			// Multipart form
+			form, _ := c.MultipartForm()
+			files := form.File["upload[]"]
+
+			// variable from the form
+			priority := c.PostForm("priority")
+
+			// listing uploading file
+			for _, file := range files {
+				log.Println(file.Filename)
+			}
+
+			for _, file := range files {
+				filename := filepath.Base(file.Filename)
+				if err := c.SaveUploadedFile(file, "static/video/"+filename); err != nil {
+					c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()), priority)
+					return
+				}
+			}
+			c.String(http.StatusOK, fmt.Sprintf("%d files uploaded! ", len(files)), priority)
+		}, POST},
 	}
 
 	rounterInit(rounter, apis)

@@ -68,8 +68,10 @@ func RouterLevel(c *gin.Context) {
 }
 
 func RouterNote(c *gin.Context) {
-	if t, err := strconv.ParseInt(c.Query("time"), 10, 64); err != nil {
-		print(t)
+	if id, err := strconv.ParseInt(c.Query("id"), 10, 64); err != nil {
+		print(id)
+	} else if id != 0 {
+		LevelDataGetNotes(c, id)
 	}
 }
 
